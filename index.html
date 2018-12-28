@@ -1,4 +1,33 @@
 <title>Jabed Bhuiyan</title>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+ jQuery.githubUser = function(username, callback) {
+  jQuery.getJSON("http://github.com/api/v1/json/" + username + "?callback=?", callback);
+}
+ 
+jQuery.fn.loadRepositores = function(username) {
+  this.html("<span>Querying GitHub for repositories...</span>");
+ 
+  var target = this; 
+  $.githubUser(username, function(data) {
+    var repos = data.user.repositories;
+    sortByNumberOfWatchers(repos);
+ 
+    var list = $('<dl/>');
+    target.empty().append(list);
+    $(repos).each(function() {
+      list.append('<dt><a href="'+ this.url +'">' + this.name + '</a></dt>');
+      list.append('<dd>' + this.description + '</dd>');
+    });
+  });
+ 
+  function sortByNumberOfWatchers(repos) {
+    repos.sort(function(a,b) {
+      return b.watchers - a.watchers;
+    });
+  }
+};
+</script>
 <!-- Put this code anywhere in the body of your page where you want the badge to show up. -->
 <center>
 <div itemscope itemtype='http://schema.org/Person' class='fiverr-seller-widget' style='display: inline-block;'>
@@ -15,6 +44,12 @@
 </center>
 
 <div class="desc">I'm a software engineer looking for challenging problems to solve. My background is in enterprise software development, however, I have an insatiable curiosity for AI – particularly deep learning – applications and their potential to change the technology landscape.</div>
+<div id="my-github-projects"></div>
+<script type="text/javascript">
+    $(function() {
+        $("#my-github-projects").loadRepositories("jabedbd");
+    });
+</script>
 
 
 
